@@ -2,8 +2,8 @@
 using namespace std;
 int fid[135360];
 int mid[135359];
-bool mflags[135359];
-bool fflags[135360];
+bool mflags[535360];
+bool fflags[535360];
 bool compare(pair<int, int> a, pair<int, int> b){
     return a.second>b.second;
 }
@@ -37,7 +37,7 @@ void cutDown(char *inputPath, int idar[], bool flagValues[],int size){
     {
         frequencySet.push_back(pair<int, int>(i, idar[i]));
     }
-    cout<<count<<endl;
+
     cout<<"finished creating vector"<<endl;
     sort(frequencySet.begin(), frequencySet.end(), compare);
     cout<<"sorted vector"<<endl;
@@ -50,7 +50,7 @@ void cutDown(char *inputPath, int idar[], bool flagValues[],int size){
 }
 
 
-void writeMaleRatings(char *outputPath, char *inputPath){
+void writeMaleRatings(char *inputPath, char *outputPath){
     ifstream inm;
     inm.open(inputPath);
 
@@ -128,8 +128,8 @@ int main(){
     cutDown(&inputPath1[0u], fid, fflags,sizeof(fid)/4);
     cutDown(&inputPath2[0u], mid, mflags, sizeof(mid)/4);
 
-    writeMaleRatings(&inputPath1[0u], &outputPath1[0u]);
-    writeFemaleRatings(&inputPath2[0u], &outputPath2[0u]);
+    writeMaleRatings(&inputPath2[0u], &outputPath2[0u]);
+    writeFemaleRatings(&inputPath1[0u], &outputPath1[0u]);
 
     return 0;
 }
