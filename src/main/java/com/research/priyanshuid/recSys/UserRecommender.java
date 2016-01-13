@@ -31,7 +31,7 @@ public class UserRecommender
 		for(int i=1;i<=5001;i++)
 			for(int j=1;j<=5001;j++)
 				mfRatingMatrix[i][j]= fmRatingMatrix[i][j]=0;
-		DataModel model = new FileDataModel(new File("data/maleToFemaleSmallMapped.csv"));
+		DataModel model = new FileDataModel(new File("data/mfTopRatings13Jan.csv"));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		UserNeighborhood neighborhood = new NearestNUserNeighborhood(k, similarity, model);
 		UserBasedRecommender recommender = 
@@ -63,7 +63,7 @@ public class UserRecommender
 		wr.close();
 		System.out.println("finished male to female recommendation process");
 
-		DataModel model2 = new FileDataModel(new File("data/femaleToMaleSmalleMapped.csv"));
+		DataModel model2 = new FileDataModel(new File("data/fmTopRatings13Jan.csv"));
 		UserSimilarity similarity2 = new PearsonCorrelationSimilarity(model2);
 		UserNeighborhood neighborhood2 = new NearestNUserNeighborhood(k, similarity2, model2);
 		UserBasedRecommender recommender2 = 
@@ -72,7 +72,7 @@ public class UserRecommender
 		//for (RecommendedItem recommendation : recommendations) {
 		// System.out.println(recommendation);
 		//}
-		BufferedWriter wr2= new BufferedWriter(new FileWriter("output/femaleTomaleRec.csv"));
+		BufferedWriter wr2= new BufferedWriter(new FileWriter("output/femaleToMaleRec.csv"));
 		for(int i=1;i<=5001;i++){
 			try{
 				List<RecommendedItem> recommendations= recommender2.recommend(i, 5000);

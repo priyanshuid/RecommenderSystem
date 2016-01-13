@@ -6,12 +6,12 @@ import java.io.IOException;
 
 import org.apache.mahout.cf.taste.common.TasteException;
 
-public class MatrixRecalculator {
+public class MatrixAverager {
 	
 	public static double weightedRatingMatrix[][]= new double[5002][5002];
 	
-	public static int newListMale[][]= new int[5002][100];
-	public static int newListFemale[][]= new int[5002][100];
+//	public static int newListMale[][]= new int[5002][100];
+//	public static int newListFemale[][]= new int[5002][100];
 	
 	public static void generateNewMatrix(int k) throws IOException, TasteException {
 		UserRecommender.computeRecommendations(k);

@@ -284,14 +284,14 @@ public class HungarianBipartiteMatching
 	{
 		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings1.csv"));
 
-		MatrixRecalculator.generateNewMatrix(k);
+		MatrixAverager.generateNewMatrix(k);
 		int r= 5001, c=5001;
 		double[][] cost = new double[5001][5001];
 		for (int i = 0; i < r; i++)
 		{
 			for (int j = 0; j < c; j++)
 			{
-				cost[i][j] =10-MatrixRecalculator.weightedRatingMatrix[i+1][j+1] ;
+				cost[i][j] =10-MatrixAverager.weightedRatingMatrix[i+1][j+1] ;
 			}
 		}
 		HungarianBipartiteMatching hbm = new HungarianBipartiteMatching(cost);
@@ -304,7 +304,7 @@ public class HungarianBipartiteMatching
 
 
 		for(int i=0;i<result.length-1;i++){
-			bw.write(i+1+","+result[i]+","+MatrixRecalculator.weightedRatingMatrix[i+1][result[i]]);
+			bw.write(i+1+","+result[i]+","+MatrixAverager.weightedRatingMatrix[i+1][result[i]]);
 			bw.write("\n");
 		}
 		bw.close();

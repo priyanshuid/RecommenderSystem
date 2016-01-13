@@ -39,7 +39,7 @@ public class ScoreCalculator {
 		HungarianBipartiteMatching.calculateMatrix(k);
 		entries= new ArrayList<matchingEntry>();
 		for(int index=0;index<SZ-1;index++){
-			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MatrixRecalculator.weightedRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
+			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MatrixAverager.weightedRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
 			entries.add(newEntry);
 		}
 		for(int i=1;i<=5000;i++)
