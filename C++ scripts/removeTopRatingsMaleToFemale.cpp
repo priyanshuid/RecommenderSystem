@@ -6,10 +6,10 @@ int main(){
     ofstream out2;
 
 
-    in.open("../data/maleToFemaleSmallMapped.csv");
+    in.open("../data/mfFinalRatings12Jan.csv");
 
-    out.open("../data/maleToFemaleTopRatings.csv");
-    out2.open("../data/maleToFemaleTopRatingsRemoved.csv");
+    out.open("../data/mfTopRatings13Jan.csv");
+    out2.open("../data/mfWTopRatings13Jan.csv");
     int counter=0;
     while(in){
 

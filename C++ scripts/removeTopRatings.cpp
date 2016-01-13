@@ -5,7 +5,6 @@ int main(){
     ofstream out;
     ofstream out2;
 
-
     in.open("../data/femaleToMaleSmallMapped.csv");
 
     out.open("../data/femaleToMaleTopRatings.csv");
