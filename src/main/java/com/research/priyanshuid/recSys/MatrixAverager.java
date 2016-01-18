@@ -14,7 +14,8 @@ public class MatrixAverager {
 //	public static int newListFemale[][]= new int[5002][100];
 	
 	public static void generateNewMatrix(int k) throws IOException, TasteException {
-		UserRecommender.computeRecommendations(k);
+		UserRecommender.computeMaleRecommendations(k);
+		UserRecommender.computeFemaleRecommendations(k);
 		
 		for(int i=1;i<=5001;i++)
 			for(int j=1;j<=5001;j++){

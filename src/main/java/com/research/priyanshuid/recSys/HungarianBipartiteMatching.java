@@ -280,9 +280,9 @@ public class HungarianBipartiteMatching
 		}
 	}
 
-	public static void calculateMatrix(int k) throws IOException, TasteException
+	public static void calculateMatchingForTwoWayRating(int k) throws IOException, TasteException
 	{
-		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings1.csv"));
+		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings.csv"));
 
 		MatrixAverager.generateNewMatrix(k);
 		int r= 5001, c=5001;
@@ -309,8 +309,61 @@ public class HungarianBipartiteMatching
 		}
 		bw.close();
 	}
+
+
+	public static void calculateMatchingForOneWayRatingHelperFunction(String outputPath, double ratingMatrix[][] ) throws IOException, TasteException{
+		BufferedWriter bw= new BufferedWriter(new FileWriter(outputPath));
+
+		int r= 5001, c=5001;
+		double[][] cost = new double[5001][5001];
+		for (int i = 0; i < r; i++)
+		{
+			for (int j = 0; j < c; j++)
+			{
+				cost[i][j] =10-ratingMatrix[i+1][j+1] ;
+			}
+		}
+		HungarianBipartiteMatching hbm = new HungarianBipartiteMatching(cost);
+		result = hbm.execute();
+		for(int i=0;i<result.length;i++)
+			result[i]+=1;
+
+		System.out.println("Bipartite Matching"+result.toString());
+		System.out.println("calculated matched matrix for profiles output at:"+outputPath);
+
+
+		for(int i=0;i<result.length-1;i++){
+			bw.write(i+1+","+result[i]+","+ratingMatrix[i+1][result[i]]);
+			bw.write("\n");
+		}
+		bw.close();
+	}
+
+	public static void calculateMatchingForOneWayRatingMale(int k) throws IOException, TasteException{
+		String mfMatchingPath= "output/maximumMatchingMaleToFemale.csv";
+		MaleToFemaleRatingGenerator.generateNewMatrix(k);
+		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(mfMatchingPath, MaleToFemaleRatingGenerator.mfRatingMatrix);
+	}
+
+	public static void calculateMatchingForOneWayRatingFemale(int k) throws IOException, TasteException{
+		String fmMatchingPath= "output/maximumMatchingFemaleToMale.csv";
+		FemaleToMaleRatingGenerator.generateNewMatrix(k);
+		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(fmMatchingPath, FemaleToMaleRatingGenerator.fmRatingMatrix);
+	}
+
 	public static void main(String args[])throws IOException, TasteException{
 		int k=20;
-		HungarianBipartiteMatching.calculateMatrix(k);
+		HungarianBipartiteMatching.calculateMatchingForTwoWayRating(k);
+
+		String mfMatchingPath= "output/maximumMatchingMaleToFemale.csv";
+		String fmMatchingPath= "output/maximumMatchingFemaleToMale.csv";
+
+		MaleToFemaleRatingGenerator.generateNewMatrix(k);
+		FemaleToMaleRatingGenerator.generateNewMatrix(k);
+
+		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(mfMatchingPath, MaleToFemaleRatingGenerator.mfRatingMatrix);
+		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(fmMatchingPath, FemaleToMaleRatingGenerator.fmRatingMatrix);
 	}
+
+
 }
