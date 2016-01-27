@@ -105,9 +105,24 @@ public class MetricScoreCalculator {
 			pair p1= newCalculator.countMatchingPoints(testMFFilePath, mfMatchingFilePath, 0);
 			pair p2= newCalculator.countMatchingPoints(testFMFilePath, fmMatchingFilePath, 0);
 			
-			System.out.println("Male to female correct predictions::with10Rating "+p1.r1+"  without10Rating "+p2.r2);
+			System.out.println("Male to female correct predictions::with10Rating "+p1.r1+"  without10Rating "+p1.r2);
 			System.out.println("Female to male correct predictions::with10Rating "+p2.r1+"  without10Rating "+p2.r2);
 			
-		//	String test
+			
+			String matchFilePath= "output/maximum_matching_with_ratings.csv";
+			
+			pair p3= newCalculator.countMatchingPoints(testMFFilePath, matchFilePath, 0);
+			pair p4= newCalculator.countMatchingPoints(testFMFilePath, matchFilePath, 1);
+			
+			System.out.println("Matched correct predictions::with10Rating "+(p3.r1+p4.r1)+"  without10Rating "+(p3.r2+p4.r2));
+			
+			String UBCFMFFilePath= "output/UBCFTopMtoF.csv";
+			String UBCFFMFilePath= "output/UBCFTopFtoM.csv";
+			pair p5= newCalculator.countMatchingPoints(testMFFilePath, UBCFMFFilePath, 0);
+			pair p6= newCalculator.countMatchingPoints(testFMFilePath, UBCFFMFilePath, 0);
+			
+			System.out.println("UBCF Male to female correct predictions::with10Rating "+p5.r1+"  without10Rating "+p5.r2);
+			System.out.println("UBCF Female to male correct predictions::with10Rating "+p6.r1+"  without10Rating "+p6.r2);
+			
 	}
 }

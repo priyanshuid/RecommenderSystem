@@ -104,8 +104,8 @@ public class ScoreCalculator {
 	
 	public static void main(String[] args) throws IOException, TasteException {
 		int k=20;
-		//scoreOneWayRatingsFemaleToMale(k);
-		//scoreOneWayRatingsMaleToFemale(k);
-		scoreTwoWayRatings(k);
+		scoreOneWayRatingsFemaleToMale(k);
+		scoreOneWayRatingsMaleToFemale(k);
+		//scoreTwoWayRatings(k);
 	}
 }
