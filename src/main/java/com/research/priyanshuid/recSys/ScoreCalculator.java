@@ -100,7 +100,6 @@ public class ScoreCalculator {
 		
 		System.out.println("Average Female to Male User Recommender System Score:"+ avgUserRecommenderScore);
 		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
-		
 	}
 	
 	public static void main(String[] args) throws IOException, TasteException {
