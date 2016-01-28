@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class UBCFRatingExtrator {
 	
-	public static void extractTopRatings(String actualDataPath, String outPath){
+	public static void extractTopRatings(String actualDataPath, String outPath, double matrix[][]){
 		BufferedReader br= null;
 		BufferedWriter wr= null;
 		String line="";
@@ -22,10 +22,16 @@ public class UBCFRatingExtrator {
 				int f, s;
 				try{
 					f= Integer.parseInt(values[0]);
-					s= Integer.parseInt(values[1]);
-					wr.write(f+","+s+",10\n");
+					for(int i=1;i<values.length;i++){
+						s= Integer.parseInt(values[i]);
+						
+						if(matrix[f][s]==10.0){
+							wr.write(f+","+s+","+"10.0\n");
+							counter++;
+						}
+					}
 					wr.flush();
-					counter++;
+					
 				}catch(Exception e) {
 					wr.write(values[0]+",0,10\n");
 					wr.flush();
@@ -49,14 +55,7 @@ public class UBCFRatingExtrator {
 		}
 	}
 	public static void main(String args[]){
-		String input= "output/femaleToMaleRec.csv";
-		String output= "output/UBCFTopFtoM.csv";
-		extractTopRatings(input, output);
-		System.out.println("Done for FM");
-		input = "output/maleToFemaleRec.csv";
-		output= "output/UBCFTopMtoF.csv";
-		extractTopRatings(input, output);
-		System.out.println("Done for MF");
+		
 	}
 
 }

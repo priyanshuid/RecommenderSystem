@@ -10,11 +10,6 @@ public class MaleToFemaleRatingGenerator {
 	
 	public static void generateNewMatrix(int k) throws IOException, TasteException {
 		UserRecommender.computeMaleRecommendations(k);
-		
-		for(int i=1;i<=5001;i++)
-			for(int j=1;j<=5001;j++){
-				mfRatingMatrix[i][j]=0.0;
-			}
 		for(int i=1;i<=5001;i++){
 			for(int j=1;j<=5001;j++){
 				mfRatingMatrix[i][j]=UserRecommender.mfRatingMatrix[i][j];

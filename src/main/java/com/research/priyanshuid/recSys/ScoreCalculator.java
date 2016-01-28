@@ -60,7 +60,7 @@ public class ScoreCalculator {
 	
 	public static void scoreOneWayRatingsMaleToFemale(int k) throws IOException, TasteException{
 		matchingRecommenderScore=0;
-		HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
+		
 		entries= new ArrayList<matchingEntry>();
 		for(int index=0;index<SZ-1;index++){
 			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MaleToFemaleRatingGenerator.mfRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
@@ -82,7 +82,7 @@ public class ScoreCalculator {
 	}
 	public static void scoreOneWayRatingsFemaleToMale(int k) throws IOException, TasteException{
 		matchingRecommenderScore=0;
-		HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
+		
 		entries= new ArrayList<matchingEntry>();
 		for(int index=0;index<SZ-1;index++){
 			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], FemaleToMaleRatingGenerator.fmRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
@@ -101,11 +101,32 @@ public class ScoreCalculator {
 		System.out.println("Average Female to Male User Recommender System Score:"+ avgUserRecommenderScore);
 		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
 	}
-	
 	public static void main(String[] args) throws IOException, TasteException {
-		int k=20;
-		scoreOneWayRatingsFemaleToMale(k);
-		scoreOneWayRatingsMaleToFemale(k);
-		//scoreTwoWayRatings(k);
+		int k=500;
+		/**
+		 * Hungarian bipartite matching for one way ratings
+		 * uncomment this code to calculate one way ratings for male/female users.
+		 */
+		//HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
+		//HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
+		//scoreOneWayRatingsFemaleToMale(k);
+		//scoreOneWayRatingsMaleToFemale(k);
+		UserRecommender.computeMaleRecommendations(k);
+		UserRecommender.computeFemaleRecommendations(k);
+		System.out.println("Scoring two way ratings");
+		
+		scoreTwoWayRatings(k);
+		System.out.println("Done scoring");
+		System.out.println("Extracting ratings");
+		
+		String input= "output/femaleToMaleRec.csv";
+		String output= "output/UBCFTopFtoM.csv";
+		UBCFRatingExtrator.extractTopRatings(input, output, UserRecommender.fmRatingMatrix);
+		System.out.println("Done for FM");
+		input = "output/maleToFemaleRec.csv";
+		output= "output/UBCFTopMtoF.csv";
+		UBCFRatingExtrator.extractTopRatings(input, output, UserRecommender.mfRatingMatrix);
+		System.out.println("Done for MF");
+		System.out.println("done");
 	}
 }

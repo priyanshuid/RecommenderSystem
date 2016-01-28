@@ -27,15 +27,11 @@ public class UserRecommender
 
 	public static void computeMaleRecommendations(int k) throws IOException, TasteException
 	{
-
-		for(int i=1;i<=5001;i++)
-			for(int j=1;j<=5001;j++)
-				mfRatingMatrix[i][j]= fmRatingMatrix[i][j]=0;
 		DataModel model = new FileDataModel(new File("data/trainMtoF18Jan.csv"));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		UserNeighborhood neighborhood = new NearestNUserNeighborhood(k, similarity, model);
 		UserBasedRecommender recommender = 
-			new GenericUserBasedRecommender(model, neighborhood, similarity);
+				new GenericUserBasedRecommender(model, neighborhood, similarity);
 		//List<RecommendedItem> recommendations = recommender.recommend(1093, 100);
 		//for (RecommendedItem recommendation : recommendations) {
 		// System.out.println(recommendation);
@@ -64,13 +60,11 @@ public class UserRecommender
 		System.out.println("finished male to female recommendation process");
 	}
 	public static void computeFemaleRecommendations(int k) throws IOException, TasteException{
-		
-
 		DataModel model2 = new FileDataModel(new File("data/trainFtoM18Jan.csv"));
 		UserSimilarity similarity2 = new PearsonCorrelationSimilarity(model2);
 		UserNeighborhood neighborhood2 = new NearestNUserNeighborhood(k, similarity2, model2);
 		UserBasedRecommender recommender2 = 
-			new GenericUserBasedRecommender(model2, neighborhood2, similarity2);
+				new GenericUserBasedRecommender(model2, neighborhood2, similarity2);
 		//List<RecommendedItem> recommendations = recommender.recommend(1093, 100);
 		//for (RecommendedItem recommendation : recommendations) {
 		// System.out.println(recommendation);
@@ -97,10 +91,5 @@ public class UserRecommender
 		}
 		wr2.close();
 		System.out.println("finished female to male recommendation process");
-	}
-	public static void main(String args[]) throws IOException, TasteException{
-		int k=20;
-		UserRecommender.computeMaleRecommendations(k);
-		UserRecommender.computeFemaleRecommendations(k);
 	}
 }
