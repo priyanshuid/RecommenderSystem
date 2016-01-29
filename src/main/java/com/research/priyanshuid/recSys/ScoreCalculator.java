@@ -1,5 +1,7 @@
 package com.research.priyanshuid.recSys;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -23,29 +25,29 @@ class matchingEntry{
 
 public class ScoreCalculator {
 	private static final int SZ=5001;
-	public static ArrayList<matchingEntry> entries;
-	
-	public static double maleUserRecommenderScore=0;
-	public static double femaleUserRecommenderScore=0;
-	
-	public static double avgUserRecommenderScore=0;
-	
-	public static double matchingRecommenderScore=0;
-	public static double avgMatchingRecommenderScore=0;
-	
+	public int[] 	 result;
+	public ArrayList<matchingEntry> entries;
+
+	public double maleUserRecommenderScore=0;
+	public double femaleUserRecommenderScore=0;
+
+	public double avgUserRecommenderScore=0;
+
+	public double matchingRecommenderScore=0;
+	public double avgMatchingRecommenderScore=0;
+
 	private static final int TOTALUSERS=5000;
-	
-	public static void scoreTwoWayRatings(int k) throws IOException, TasteException{
-		HungarianBipartiteMatching.calculateMatchingForTwoWayRating(k);
+
+	public void scoreTwoWayRatings(int k, UserRecommender ob, MatrixAverager avgob) throws IOException, TasteException{
 		entries= new ArrayList<matchingEntry>();
 		for(int index=0;index<SZ-1;index++){
-			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MatrixAverager.weightedRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
+			matchingEntry newEntry= new matchingEntry(index+1, result[index], avgob.weightedRatingMatrix[index+1][result[index]]);
 			entries.add(newEntry);
 		}
 		for(int i=1;i<=5000;i++)
 		{
-			maleUserRecommenderScore+= UserRecommender.mfRatingMatrix[i][UserRecommender.mTopRec[i]];
-			femaleUserRecommenderScore+= UserRecommender.fmRatingMatrix[i][UserRecommender.fTopRec[i]];
+			maleUserRecommenderScore+= ob.mfRatingMatrix[i][ob.mTopRec[i]];
+			femaleUserRecommenderScore+= ob.fmRatingMatrix[i][ob.fTopRec[i]];
 		}
 		avgUserRecommenderScore= (maleUserRecommenderScore+femaleUserRecommenderScore)/TOTALUSERS;
 		avgUserRecommenderScore= avgUserRecommenderScore/2;
@@ -53,80 +55,115 @@ public class ScoreCalculator {
 			matchingRecommenderScore+=entry.rating;
 		}
 		avgMatchingRecommenderScore= matchingRecommenderScore/TOTALUSERS;
-		
+
 		System.out.println("Average User Recommender System Score:"+ avgUserRecommenderScore);
 		System.out.println("Average Matching Recommender System Score:"+ avgMatchingRecommenderScore);
 	}
-	
-	public static void scoreOneWayRatingsMaleToFemale(int k) throws IOException, TasteException{
-		matchingRecommenderScore=0;
-		
-		entries= new ArrayList<matchingEntry>();
-		for(int index=0;index<SZ-1;index++){
-			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MaleToFemaleRatingGenerator.mfRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
-			entries.add(newEntry);
-		}
-		for(int i=1;i<=5000;i++)
-		{
-			maleUserRecommenderScore+= UserRecommender.mfRatingMatrix[i][UserRecommender.mTopRec[i]];
-		}
-		avgUserRecommenderScore= (maleUserRecommenderScore)/TOTALUSERS;
-		for(matchingEntry entry:entries){
-			matchingRecommenderScore+=entry.rating;
-		}
-		avgMatchingRecommenderScore= matchingRecommenderScore/TOTALUSERS;
-		
-		System.out.println("Average Male to Female User Recommender System Score:"+ avgUserRecommenderScore);
-		System.out.println("Average Male to Female Matching Recommender System Score:"+ avgMatchingRecommenderScore);
-		
-	}
-	public static void scoreOneWayRatingsFemaleToMale(int k) throws IOException, TasteException{
-		matchingRecommenderScore=0;
-		
-		entries= new ArrayList<matchingEntry>();
-		for(int index=0;index<SZ-1;index++){
-			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], FemaleToMaleRatingGenerator.fmRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
-			entries.add(newEntry);
-		}
-		for(int i=1;i<=5000;i++)
-		{
-			femaleUserRecommenderScore+= UserRecommender.fmRatingMatrix[i][UserRecommender.fTopRec[i]];
-		}
-		avgUserRecommenderScore= (femaleUserRecommenderScore)/TOTALUSERS;
-		for(matchingEntry entry:entries){
-			matchingRecommenderScore+=entry.rating;
-		}
-		avgMatchingRecommenderScore= matchingRecommenderScore/TOTALUSERS;
-		
-		System.out.println("Average Female to Male User Recommender System Score:"+ avgUserRecommenderScore);
-		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
-	}
+
+	//	public static void scoreOneWayRatingsMaleToFemale(int k) throws IOException, TasteException{
+	//		matchingRecommenderScore=0;
+	//		
+	//		entries= new ArrayList<matchingEntry>();
+	//		for(int index=0;index<SZ-1;index++){
+	//			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], MaleToFemaleRatingGenerator.mfRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
+	//			entries.add(newEntry);
+	//		}
+	//		for(int i=1;i<=5000;i++)
+	//		{
+	//			maleUserRecommenderScore+= UserRecommender.mfRatingMatrix[i][UserRecommender.mTopRec[i]];
+	//		}
+	//		avgUserRecommenderScore= (maleUserRecommenderScore)/TOTALUSERS;
+	//		for(matchingEntry entry:entries){
+	//			matchingRecommenderScore+=entry.rating;
+	//		}
+	//		avgMatchingRecommenderScore= matchingRecommenderScore/TOTALUSERS;
+	//		
+	//		System.out.println("Average Male to Female User Recommender System Score:"+ avgUserRecommenderScore);
+	//		System.out.println("Average Male to Female Matching Recommender System Score:"+ avgMatchingRecommenderScore);
+	//		
+	//	}
+	//	public static void scoreOneWayRatingsFemaleToMale(int k) throws IOException, TasteException{
+	//		matchingRecommenderScore=0;
+	//		
+	//		entries= new ArrayList<matchingEntry>();
+	//		for(int index=0;index<SZ-1;index++){
+	//			matchingEntry newEntry= new matchingEntry(index+1, HungarianBipartiteMatching.result[index], FemaleToMaleRatingGenerator.fmRatingMatrix[index+1][HungarianBipartiteMatching.result[index]]);
+	//			entries.add(newEntry);
+	//		}
+	//		for(int i=1;i<=5000;i++)
+	//		{
+	//			femaleUserRecommenderScore+= UserRecommender.fmRatingMatrix[i][UserRecommender.fTopRec[i]];
+	//		}
+	//		avgUserRecommenderScore= (femaleUserRecommenderScore)/TOTALUSERS;
+	//		for(matchingEntry entry:entries){
+	//			matchingRecommenderScore+=entry.rating;
+	//		}
+	//		avgMatchingRecommenderScore= matchingRecommenderScore/TOTALUSERS;
+	//		
+	//		System.out.println("Average Female to Male User Recommender System Score:"+ avgUserRecommenderScore);
+	//		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
+	//	}
 	public static void main(String[] args) throws IOException, TasteException {
-		int k=500;
-		/**
-		 * Hungarian bipartite matching for one way ratings
-		 * uncomment this code to calculate one way ratings for male/female users.
-		 */
-		//HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
-		//HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
-		//scoreOneWayRatingsFemaleToMale(k);
-		//scoreOneWayRatingsMaleToFemale(k);
-		UserRecommender.computeMaleRecommendations(k);
-		UserRecommender.computeFemaleRecommendations(k);
-		System.out.println("Scoring two way ratings");
-		
-		scoreTwoWayRatings(k);
-		System.out.println("Done scoring");
-		System.out.println("Extracting ratings");
-		
-		String input= "output/femaleToMaleRec.csv";
-		String output= "output/UBCFTopFtoM.csv";
-		UBCFRatingExtrator.extractTopRatings(input, output, UserRecommender.fmRatingMatrix);
-		System.out.println("Done for FM");
-		input = "output/maleToFemaleRec.csv";
-		output= "output/UBCFTopMtoF.csv";
-		UBCFRatingExtrator.extractTopRatings(input, output, UserRecommender.mfRatingMatrix);
-		System.out.println("Done for MF");
-		System.out.println("done");
+		int ar[]= {5, 10, 20, 40, 80, 120, 200};
+		for(int i=0;i<8;i++){
+			int k=ar[i];
+			System.out.println(k);
+			/**
+			 * Hungarian bipartite matching for one way ratings
+			 * uncomment this code to calculate one way ratings for male/female users.
+			 */
+			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
+			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
+			//scoreOneWayRatingsFemaleToMale(k);
+			//scoreOneWayRatingsMaleToFemale(k);
+
+			UserRecommender urob= new UserRecommender();
+			urob.computeFemaleRecommendations(k);
+			urob.computeMaleRecommendations(k);
+
+			MatrixAverager avgob= new MatrixAverager();
+			avgob.generateNewMatrix(k, urob);
+
+			ScoreCalculator scob= new ScoreCalculator();
+			scob.calculateMatchingForTwoWayRating(k, avgob);
+
+			scob.scoreTwoWayRatings(k, urob, avgob);
+			System.out.println("Done scoring");
+
+			String input= "output/femaleToMaleRec.csv";
+			String output= "output/UBCFTopFtoM.csv";
+			UBCFRatingExtrator.extractTopRatings(input, output, urob.fmRatingMatrix);
+			System.out.println("Done for FM");
+			input = "output/maleToFemaleRec.csv";
+			output= "output/UBCFTopMtoF.csv";
+			UBCFRatingExtrator.extractTopRatings(input, output, urob.mfRatingMatrix);
+			System.out.println("k="+k+"done");
+			MetricScoreCalculator mscob= new MetricScoreCalculator();
+			mscob.calculate();
+		}
+	}
+	public void calculateMatchingForTwoWayRating(int k, MatrixAverager ob) throws IOException, TasteException
+	{
+		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings.csv"));
+		int r= 5001, c=5001;
+		double[][] cost = new double[5001][5001];
+		for (int i = 0; i < r; i++)
+		{
+			for (int j = 0; j < c; j++)
+			{
+				cost[i][j] =10-ob.weightedRatingMatrix[i+1][j+1] ;
+			}
+		}
+		HungarianBipartiteMatching hbm = new HungarianBipartiteMatching(cost);
+		result = hbm.execute();
+		for(int i=0;i<result.length;i++)
+			result[i]+=1;
+		System.out.println("Bipartite Matching"+result.toString());
+		System.out.println("calculated matched matrix");
+		for(int i=0;i<result.length-1;i++){
+			bw.write(i+1+","+result[i]+","+ob.weightedRatingMatrix[i+1][result[i]]);
+			bw.write("\n");
+		}
+		bw.close();
 	}
 }

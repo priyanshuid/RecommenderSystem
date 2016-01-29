@@ -102,7 +102,7 @@ public class MetricScoreCalculator {
 		return p;
 	}
 		
-		public static void main(String args[]){
+		public void calculate(){
 			MetricScoreCalculator newCalculator= new MetricScoreCalculator();
 			//String mfMatchingFilePath= "output/maximumMatchingMaleToFemale.csv";
 			//String fmMatchingFilePath= "output/maximumMatchingFemaleToMale.csv";

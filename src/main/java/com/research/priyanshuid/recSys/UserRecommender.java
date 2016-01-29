@@ -19,13 +19,13 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 public class UserRecommender 
 {
-	public static double mfRatingMatrix[][]= new double[5002][5002];
-	public static double fmRatingMatrix[][]= new double[5002][5002];
+	public double mfRatingMatrix[][]= new double[5002][5002];
+	public double fmRatingMatrix[][]= new double[5002][5002];
 
-	public static int mTopRec[]= new int[5002];
-	public static int fTopRec[]= new int[5002];
+	public int mTopRec[]= new int[5002];
+	public int fTopRec[]= new int[5002];
 
-	public static void computeMaleRecommendations(int k) throws IOException, TasteException
+	public void computeMaleRecommendations(int k) throws IOException, TasteException
 	{
 		DataModel model = new FileDataModel(new File("data/trainMtoF18Jan.csv"));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
@@ -59,7 +59,7 @@ public class UserRecommender
 		wr.close();
 		System.out.println("finished male to female recommendation process");
 	}
-	public static void computeFemaleRecommendations(int k) throws IOException, TasteException{
+	public void computeFemaleRecommendations(int k) throws IOException, TasteException{
 		DataModel model2 = new FileDataModel(new File("data/trainFtoM18Jan.csv"));
 		UserSimilarity similarity2 = new PearsonCorrelationSimilarity(model2);
 		UserNeighborhood neighborhood2 = new NearestNUserNeighborhood(k, similarity2, model2);
