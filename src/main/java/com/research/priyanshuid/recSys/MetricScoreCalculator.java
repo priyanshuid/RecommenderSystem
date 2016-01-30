@@ -6,21 +6,21 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class MetricScoreCalculator {
-	
+
 	public class pair{
 		public int r1, r2;
-		
+
 		public pair(){
 			r1=0;
 			r2=0;
 		}
-		
+
 		public pair(int a, int b){
 			r1=a;
 			r2=b;
 		}
 	}
-	
+
 	public pair countMatchingPoints(String actualDataPath, String generatedResultPath, int flag){
 		boolean markedWith10[]= new boolean[5001];
 		boolean markedWithout10[]= new boolean[5001];
@@ -30,9 +30,9 @@ public class MetricScoreCalculator {
 				actual[r][c]=false;
 		BufferedReader br= null;
 		String line="";
-		
+
 		try{
-			
+
 			br= new BufferedReader(new FileReader(actualDataPath));
 			while((line= br.readLine())!=null){
 				String []values= line.split(",");
@@ -40,7 +40,7 @@ public class MetricScoreCalculator {
 				f= Integer.parseInt(values[0].trim());
 				s= Integer.parseInt(values[1].trim());
 				actual[f][s]=true;
-				
+
 			}
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class MetricScoreCalculator {
 			e.printStackTrace();
 		}finally{
 			if(br!=null){
-				
+
 				try{
 					br.close();
 				}catch(IOException e){
@@ -67,7 +67,7 @@ public class MetricScoreCalculator {
 				f= Integer.parseInt(values[0].trim());
 				s= Integer.parseInt(values[1].trim());
 				rating = Double.parseDouble(values[2].trim());
-				
+
 				if(flag==0){
 					int temp=f;
 					f= s;
@@ -101,36 +101,42 @@ public class MetricScoreCalculator {
 		pair p= new pair(counterWith10, counterWithout10);
 		return p;
 	}
+
+	public void calculate(){
+		MetricScoreCalculator newCalculator= new MetricScoreCalculator();
+		//String mfMatchingFilePath= "output/maximumMatchingMaleToFemale.csv";
+		//String fmMatchingFilePath= "output/maximumMatchingFemaleToMale.csv";
+
+		String testMFFilePath= "data/testMtoF18Jan.csv";
+		String testFMFilePath= "data/testFtoM18Jan.csv";
+
+		//pair p1= newCalculator.countMatchingPoints(testMFFilePath, mfMatchingFilePath, 0);
+		//pair p2= newCalculator.countMatchingPoints(testFMFilePath, fmMatchingFilePath, 0);
+
+		//System.out.println("Male to female correct predictions::with10Rating "+p1.r1+"  without10Rating "+p1.r2);
+		//System.out.println("Female to male correct predictions::with10Rating "+p2.r1+"  without10Rating "+p2.r2);
+
+
+		String matchFilePath= "output/maximum_matching_with_ratings.csv";
+
+		pair p3= newCalculator.countMatchingPoints(testMFFilePath, matchFilePath, 0);
+		pair p4= newCalculator.countMatchingPoints(testFMFilePath, matchFilePath, 1);
+
+		String UBCFMFFilePath= "output/UBCFTopMtoF.csv";
+		String UBCFFMFilePath= "output/UBCFTopFtoM.csv";
+		pair p5= newCalculator.countMatchingPoints(testMFFilePath, UBCFMFFilePath, 0);
+		pair p6= newCalculator.countMatchingPoints(testFMFilePath, UBCFFMFilePath, 0);
+
+		System.out.println("UBCF Male to female correct predictions::"+p5.r1);
+		System.out.println("UBCF Female to male correct predictions::"+p6.r1);
+
+		System.out.println("UBCF Algorithm total number of correct predictions::"+(p5.r1+p6.r1));
+		System.out.println("Matching Algorithm total number of correct predictions::"+(p3.r2+p4.r2));
+
+		String randomOutputPath= "output/randomMatching.csv";
+		pair p7= newCalculator.countMatchingPoints(testMFFilePath, randomOutputPath, 0);
+		pair p8= newCalculator.countMatchingPoints(testFMFilePath, randomOutputPath, 1);
 		
-		public void calculate(){
-			MetricScoreCalculator newCalculator= new MetricScoreCalculator();
-			//String mfMatchingFilePath= "output/maximumMatchingMaleToFemale.csv";
-			//String fmMatchingFilePath= "output/maximumMatchingFemaleToMale.csv";
-			
-			String testMFFilePath= "data/testMtoF18Jan.csv";
-			String testFMFilePath= "data/testFtoM18Jan.csv";
-			
-			//pair p1= newCalculator.countMatchingPoints(testMFFilePath, mfMatchingFilePath, 0);
-			//pair p2= newCalculator.countMatchingPoints(testFMFilePath, fmMatchingFilePath, 0);
-			
-			//System.out.println("Male to female correct predictions::with10Rating "+p1.r1+"  without10Rating "+p1.r2);
-			//System.out.println("Female to male correct predictions::with10Rating "+p2.r1+"  without10Rating "+p2.r2);
-			
-			
-			String matchFilePath= "output/maximum_matching_with_ratings.csv";
-			
-			pair p3= newCalculator.countMatchingPoints(testMFFilePath, matchFilePath, 0);
-			pair p4= newCalculator.countMatchingPoints(testFMFilePath, matchFilePath, 1);
-			
-			String UBCFMFFilePath= "output/UBCFTopMtoF.csv";
-			String UBCFFMFilePath= "output/UBCFTopFtoM.csv";
-			pair p5= newCalculator.countMatchingPoints(testMFFilePath, UBCFMFFilePath, 0);
-			pair p6= newCalculator.countMatchingPoints(testFMFilePath, UBCFFMFilePath, 0);
-			
-			System.out.println("UBCF Male to female correct predictions::"+p5.r1);
-			System.out.println("UBCF Female to male correct predictions::"+p6.r1);
-			
-			System.out.println("UBCF Algorithm total number of correct predictions::"+(p5.r1+p6.r1));
-			System.out.println("Matching Algorithm total number of correct predictions::"+(p3.r2+p4.r2));
+		System.out.println("Random Matching Algorithm total number of correct predictions: "+p7.r1+p8.r1);
 	}
 }

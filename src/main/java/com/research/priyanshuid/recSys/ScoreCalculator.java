@@ -104,8 +104,8 @@ public class ScoreCalculator {
 	//		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
 	//	}
 	public static void main(String[] args) throws IOException, TasteException {
-		int ar[]= {5, 10, 20, 40, 80, 120, 200};
-		for(int i=0;i<8;i++){
+		int ar[]= {5, 10, 20, 40, 60};
+		for(int i=0;i<=4;i++){
 			int k=ar[i];
 			System.out.println(k);
 			/**
