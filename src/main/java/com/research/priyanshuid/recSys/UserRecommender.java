@@ -25,9 +25,10 @@ public class UserRecommender
 	public int mTopRec[]= new int[5002];
 	public int fTopRec[]= new int[5002];
 
-	public void computeMaleRecommendations(int k) throws IOException, TasteException
+	public void computeMaleRecommendations(String mfTrainFilePath, int k) throws IOException, TasteException
 	{
-		DataModel model = new FileDataModel(new File("data/testFile.csv"));
+		String str= "data/trainMtoF18Jan.csv";
+		DataModel model = new FileDataModel(new File(str));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		UserNeighborhood neighborhood = new NearestNUserNeighborhood(k, similarity, model);
 		UserBasedRecommender recommender = 
@@ -60,16 +61,13 @@ public class UserRecommender
 		wr.close();
 		System.out.println("finished male to female recommendation process");
 	}
-	public void computeFemaleRecommendations(int k) throws IOException, TasteException{
-		DataModel model2 = new FileDataModel(new File("data/trainFtoM18Jan.csv"));
+	public void computeFemaleRecommendations(String FMTrainFilePath, int k) throws IOException, TasteException{
+		String str= "data/trainFtoM18Jan.csv";
+		DataModel model2 = new FileDataModel(new File(str));
 		UserSimilarity similarity2 = new PearsonCorrelationSimilarity(model2);
 		UserNeighborhood neighborhood2 = new NearestNUserNeighborhood(k, similarity2, model2);
 		UserBasedRecommender recommender2 = 
 				new GenericUserBasedRecommender(model2, neighborhood2, similarity2);
-		//List<RecommendedItem> recommendations = recommender.recommend(1093, 100);
-		//for (RecommendedItem recommendation : recommendations) {
-		// System.out.println(recommendation);
-		//}
 		BufferedWriter wr2= new BufferedWriter(new FileWriter("output/femaleToMaleRec.csv"));
 		for(int i=1;i<=5000;i++){
 			try{

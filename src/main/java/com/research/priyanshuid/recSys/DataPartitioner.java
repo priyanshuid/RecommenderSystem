@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.Random;
 
 public class DataPartitioner {
-	private static final Double partition= 0.3;   //test will have this ratio of values
-
 	ArrayList<String> fetchRatings(String filePath) throws FileNotFoundException{
 
 		BufferedReader br;
@@ -52,8 +50,8 @@ public class DataPartitioner {
 			System.out.println(E.getStackTrace());
 		}
 	}
-	public void partitionData(String inputFilePath, String testFilePath, String trainFilePath, double Partition) throws FileNotFoundException{
+	public void partitionDataRandomly(String inputFilePath, String testFilePath, String trainFilePath, Double Partition) throws FileNotFoundException{
 		ArrayList<String> shuffledRatings= fetchRatings(inputFilePath);
-		printRatings(trainFilePath, testFilePath, partition, shuffledRatings);
+		printRatings(trainFilePath, testFilePath, Partition, shuffledRatings);
 	}
 }

@@ -1,6 +1,7 @@
 package com.research.priyanshuid.recSys;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,20 @@ class matchingEntry{
 	}
 }
 
-public class ScoreCalculator {
+public class SimulationDriver {
+
+	private static final Double PARTITION= 0.3; 
+
+	public String fmRawRatingsFilePath= "data/fmFinalRatings12Jan.csv";
+	public String mfRawRatingsFilePath= "data/mfFinalRatings12Jan.csv";
+	private Integer partInt= (int) (PARTITION*10);
+
+	public String testMFRatingPath= "data/testMF"+ partInt.toString() +".csv";
+	public String trainMFRatingPath= "data/trainMF"+partInt.toString()+".csv";
+
+	public String testFMRatingPath= "data/testFM"+ partInt.toString() +".csv";
+	public String trainFMRatingPath= "data/trainFM"+partInt.toString()+".csv";
+
 	private static final int SZ=5001;
 	public int[] 	 result;
 	public ArrayList<matchingEntry> entries;
@@ -103,45 +117,7 @@ public class ScoreCalculator {
 	//		System.out.println("Average Female to Male User Recommender System Score:"+ avgUserRecommenderScore);
 	//		System.out.println("Average FemaleTo Male Matching Recommender System Score:"+ avgMatchingRecommenderScore);
 	//	}
-	public static void main(String[] args) throws IOException, TasteException {
-		int ar[]= {5, 10, 20, 40, 60};
-		for(int i=0;i<=4;i++){
-			int k=ar[i];
-			System.out.println(k);
-			/**
-			 * Hungarian bipartite matching for one way ratings
-			 * uncomment this code to calculate one way ratings for male/female users.
-			 */
-			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
-			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
-			//scoreOneWayRatingsFemaleToMale(k);
-			//scoreOneWayRatingsMaleToFemale(k);
 
-			UserRecommender urob= new UserRecommender();
-			urob.computeFemaleRecommendations(k);
-			urob.computeMaleRecommendations(k);
-
-			MatrixAverager avgob= new MatrixAverager();
-			avgob.generateNewMatrix(k, urob);
-
-			ScoreCalculator scob= new ScoreCalculator();
-			scob.calculateMatchingForTwoWayRating(k, avgob);
-
-			scob.scoreTwoWayRatings(k, urob, avgob);
-			System.out.println("Done scoring");
-
-			String input= "output/femaleToMaleRec.csv";
-			String output= "output/UBCFTopFtoM.csv";
-			UBCFRatingExtrator.extractTopRatings(input, output, urob.fmRatingMatrix);
-			System.out.println("Done for FM");
-			input = "output/maleToFemaleRec.csv";
-			output= "output/UBCFTopMtoF.csv";
-			UBCFRatingExtrator.extractTopRatings(input, output, urob.mfRatingMatrix);
-			System.out.println("k="+k+"done");
-			MetricScoreCalculator mscob= new MetricScoreCalculator();
-			mscob.calculate();
-		}
-	}
 	public void calculateMatchingForTwoWayRating(int k, MatrixAverager ob) throws IOException, TasteException
 	{
 		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings.csv"));
@@ -165,5 +141,54 @@ public class ScoreCalculator {
 			bw.write("\n");
 		}
 		bw.close();
+	}
+	public void generatePartition() throws FileNotFoundException{
+		DataPartitioner dp= new DataPartitioner();
+		dp.partitionDataRandomly(mfRawRatingsFilePath, testMFRatingPath, trainMFRatingPath, PARTITION);
+		dp.partitionDataRandomly(fmRawRatingsFilePath, testFMRatingPath, trainFMRatingPath, PARTITION);
+	}
+
+	public static void main(String[] args) throws IOException, TasteException {
+
+		int ar[]= {5, 10, 20, 40, 60};
+
+		for(int i=0;i<=4;i++){
+			int k=ar[i];
+			System.out.println(k);
+			/**
+			 * Hungarian bipartite matching for one way ratings
+			 * uncomment this code to calculate one way ratings for male/female users.
+			 */
+			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingMale(k);
+			//HungarianBipartiteMatching.calculateMatchingForOneWayRatingFemale(k);
+			//scoreOneWayRatingsFemaleToMale(k);
+			//scoreOneWayRatingsMaleToFemale(k);
+
+			SimulationDriver scob= new SimulationDriver();
+			scob.generatePartition();
+
+			UserRecommender urob= new UserRecommender();
+			urob.computeFemaleRecommendations(scob.trainFMRatingPath, k);
+			urob.computeMaleRecommendations(scob.trainMFRatingPath, k);
+
+			MatrixAverager avgob= new MatrixAverager();
+			avgob.generateNewMatrix(k, urob);
+
+			scob.calculateMatchingForTwoWayRating(k, avgob);
+
+			scob.scoreTwoWayRatings(k, urob, avgob);
+			System.out.println("Done scoring");
+
+			String input= "output/femaleToMaleRec.csv";
+			String output= "output/UBCFTopFtoM.csv";
+			UBCFRatingExtrator.extractTopRatings(input, output, urob.fmRatingMatrix);
+			System.out.println("Done for FM");
+			input = "output/maleToFemaleRec.csv";
+			output= "output/UBCFTopMtoF.csv";
+			UBCFRatingExtrator.extractTopRatings(input, output, urob.mfRatingMatrix);
+			System.out.println("k="+k+"done");
+			MetricScoreCalculator mscob= new MetricScoreCalculator();
+			mscob.calculate();
+		}
 	}
 }
