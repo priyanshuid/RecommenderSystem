@@ -18,6 +18,7 @@ public class MatrixAverager {
 		for(int i=1;i<=5001;i++){
 			for(int j=1;j<=5001;j++){
 				weightedRatingMatrix[i][j]=(ob.mfRatingMatrix[i][j]+ob.fmRatingMatrix[j][i])/2;
+				//weightedRatingMatrix[i][j]=Math.max(ob.mfRatingMatrix[i][j],ob.fmRatingMatrix[j][i]);
 			}
 		}
 		BufferedWriter bw= new BufferedWriter(new FileWriter("output/weightedRatingMatrix.csv"));

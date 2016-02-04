@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Random;
 
 public class RandomMatcher {
-	
+
 	public class pair{
 		int i, j;
 		pair(){
@@ -20,10 +20,10 @@ public class RandomMatcher {
 			this.j= j;
 		}
 	}
-	
+
 	public void matchRandomProfiles() throws IOException{
 		ArrayList<Integer> list= new ArrayList<Integer>();
-		for(int i=1;i<=5000;i++)
+		for(int i=5000;i>=1;i--)
 			list.add(i);
 		long seed= System.nanoTime();
 		Collections.shuffle(list, new Random(seed));
@@ -33,7 +33,7 @@ public class RandomMatcher {
 			pair p= new pair(i+1, list.get(i));
 			matching.add(p);
 		}
-		
+
 		BufferedWriter br= new BufferedWriter(new FileWriter("output/randomMatching.csv"));
 		for(int i=0;i<5000;i++){
 			br.write(i+1+","+list.get(i)+",10.0\n");

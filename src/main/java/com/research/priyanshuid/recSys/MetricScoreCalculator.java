@@ -102,7 +102,7 @@ public class MetricScoreCalculator {
 		return p;
 	}
 
-	public void calculate(){
+	public void calculate() throws IOException{
 		MetricScoreCalculator newCalculator= new MetricScoreCalculator();
 		//String mfMatchingFilePath= "output/maximumMatchingMaleToFemale.csv";
 		//String fmMatchingFilePath= "output/maximumMatchingFemaleToMale.csv";
@@ -133,10 +133,23 @@ public class MetricScoreCalculator {
 		System.out.println("UBCF Algorithm total number of correct predictions::"+(p5.r1+p6.r1));
 		System.out.println("Matching Algorithm total number of correct predictions::"+(p3.r2+p4.r2));
 
-		String randomOutputPath= "output/randomMatching.csv";
-		pair p7= newCalculator.countMatchingPoints(testMFFilePath, randomOutputPath, 0);
-		pair p8= newCalculator.countMatchingPoints(testFMFilePath, randomOutputPath, 1);
-		
-		System.out.println("Random Matching Algorithm total number of correct predictions: "+p7.r1+p8.r1);
+		RandomMatcher rm= new RandomMatcher();
+		pair p7= new pair(), p8= new pair();
+		double v1=0, v2=0, v3=0, v4=0;
+		for(int counter=1;counter<=100;counter++){
+			rm.matchRandomProfiles();
+			String randomOutputPath= "output/randomMatching.csv";
+			pair t1= newCalculator.countMatchingPoints(testMFFilePath, randomOutputPath, 0);
+			pair t2= newCalculator.countMatchingPoints(testFMFilePath, randomOutputPath, 1);
+			v1+=t1.r1;
+			v2+=t1.r2;
+			v3+=t2.r1;
+			v4+=t2.r2;
+		}
+		p7.r1= (int)(v1/100);
+		p7.r2= (int)(v2/100);
+		p8.r1= (int)(v3/100);
+		p8.r2= (int)(v4/100);
+		System.out.println("Random Matching Algorithm total number of correct predictions: "+(p7.r1+p8.r1));
 	}
 }

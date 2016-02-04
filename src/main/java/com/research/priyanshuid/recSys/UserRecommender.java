@@ -27,15 +27,16 @@ public class UserRecommender
 
 	public void computeMaleRecommendations(int k) throws IOException, TasteException
 	{
-		DataModel model = new FileDataModel(new File("data/trainMtoF18Jan.csv"));
+		DataModel model = new FileDataModel(new File("data/testFile.csv"));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		UserNeighborhood neighborhood = new NearestNUserNeighborhood(k, similarity, model);
 		UserBasedRecommender recommender = 
 				new GenericUserBasedRecommender(model, neighborhood, similarity);
-		//List<RecommendedItem> recommendations = recommender.recommend(1093, 100);
-		//for (RecommendedItem recommendation : recommendations) {
-		// System.out.println(recommendation);
-		//}
+//		List<RecommendedItem> recommendations = recommender.recommend(2, 5);
+//		System.out.println(recommendations.size());
+//		for (RecommendedItem recommendation : recommendations) {
+//		 System.out.println(recommendation);
+//		}
 		BufferedWriter wr= new BufferedWriter(new FileWriter("output/maleToFemaleRec.csv"));
 		for(int i=1;i<=5000;i++){
 			try{
@@ -92,4 +93,9 @@ public class UserRecommender
 		wr2.close();
 		System.out.println("finished female to male recommendation process");
 	}
+//	public static void main(String args[]) throws IOException, TasteException{
+//		int k=3;
+//		UserRecommender ur= new UserRecommender();
+//		ur.computeMaleRecommendations(k);
+//	}
 }

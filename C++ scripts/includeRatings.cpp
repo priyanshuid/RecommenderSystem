@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define RATIO 0.05
+#define RATIO 0.2
 
 int fMtoF[5001];
 int fFtoM[5001];
