@@ -127,6 +127,20 @@ public class SimulationDriverExperiment2 {
 
 		RandomMatcher rmob= new RandomMatcher();
 		rmob.matchRandomProfiles(randomResultPath, avgob.weightedRatingMatrix);
+		
+		Double matchingDifferenceScore= calculateDifferenceMetric(matchingResultPath, numberOfTestHitsMatching);
+		Double randomDifferenceScore= calculateDifferenceMetric(randomResultPath, numberOfTestHitsRandom);
+		System.out.println("MatchingDifferenceScore=>"+ matchingDifferenceScore);
+		System.out.println("RandomMatchingDifferenceScore=>"+randomDifferenceScore);
+	}
+	public static void main(String args[]) throws IOException, TasteException{
+		SimulationDriverExperiment2 sde= new SimulationDriverExperiment2();
+		int k=50;
+		String mfFilePath= "";
+		String fmFilePath= "";
+		String matchingResultPath="";
+		String randomResultPath= "";
+		sde.simulate(mfFilePath, fmFilePath, matchingResultPath, randomResultPath, k);
 	}
 
 }
