@@ -21,7 +21,7 @@ public class MetricScoreCalculator {
 		}
 	}
 
-	public pair countMatchingPoints(String actualDataPath, String generatedResultPath, int flag){
+	public pair countMatchingPoints(String actualDataPath, String generatedResultPath, int flag, Double Threshold){
 		boolean markedWith10[]= new boolean[5001];
 		boolean markedWithout10[]= new boolean[5001];
 		boolean actual[][]= new boolean[5002][5002];
@@ -102,7 +102,7 @@ public class MetricScoreCalculator {
 		return p;
 	}
 
-	public void calculate() throws IOException{
+	public void calculate(Double avgRatings[][], Double Threshold) throws IOException{
 		MetricScoreCalculator newCalculator= new MetricScoreCalculator();
 		//String mfMatchingFilePath= "output/maximumMatchingMaleToFemale.csv";
 		//String fmMatchingFilePath= "output/maximumMatchingFemaleToMale.csv";
@@ -119,13 +119,13 @@ public class MetricScoreCalculator {
 
 		String matchFilePath= "output/maximum_matching_with_ratings.csv";
 
-		pair p3= newCalculator.countMatchingPoints(testMFFilePath, matchFilePath, 0);
-		pair p4= newCalculator.countMatchingPoints(testFMFilePath, matchFilePath, 1);
+		pair p3= newCalculator.countMatchingPoints(testMFFilePath, matchFilePath, 0, Threshold);
+		pair p4= newCalculator.countMatchingPoints(testFMFilePath, matchFilePath, 1, Threshold);
 
 		String UBCFMFFilePath= "output/UBCFTopMtoF.csv";
 		String UBCFFMFilePath= "output/UBCFTopFtoM.csv";
-		pair p5= newCalculator.countMatchingPoints(testMFFilePath, UBCFMFFilePath, 0);
-		pair p6= newCalculator.countMatchingPoints(testFMFilePath, UBCFFMFilePath, 0);
+		pair p5= newCalculator.countMatchingPoints(testMFFilePath, UBCFMFFilePath, 0, Threshold);
+		pair p6= newCalculator.countMatchingPoints(testFMFilePath, UBCFFMFilePath, 0, Threshold);
 
 		System.out.println("UBCF Male to female correct predictions::"+p5.r1);
 		System.out.println("UBCF Female to male correct predictions::"+p6.r1);
@@ -137,10 +137,10 @@ public class MetricScoreCalculator {
 		pair p7= new pair(), p8= new pair();
 		double v1=0, v2=0, v3=0, v4=0;
 		for(int counter=1;counter<=100;counter++){
-			rm.matchRandomProfiles();
 			String randomOutputPath= "output/randomMatching.csv";
-			pair t1= newCalculator.countMatchingPoints(testMFFilePath, randomOutputPath, 0);
-			pair t2= newCalculator.countMatchingPoints(testFMFilePath, randomOutputPath, 1);
+			rm.matchRandomProfiles(randomOutputPath,avgRatings);
+			pair t1= newCalculator.countMatchingPoints(testMFFilePath, randomOutputPath, 0, Threshold);
+			pair t2= newCalculator.countMatchingPoints(testFMFilePath, randomOutputPath, 1, Threshold);
 			v1+=t1.r1;
 			v2+=t1.r2;
 			v3+=t2.r1;

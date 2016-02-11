@@ -8,7 +8,7 @@ import org.apache.mahout.cf.taste.common.TasteException;
 
 public class MatrixAverager {
 	
-	public double weightedRatingMatrix[][]= new double[5002][5002];	
+	public Double weightedRatingMatrix[][]= new Double[5002][5002];	
 	public void generateNewMatrix(int k, UserRecommender ob) throws IOException, TasteException {
 	
 		/**

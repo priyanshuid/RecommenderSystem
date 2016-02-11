@@ -21,7 +21,7 @@ public class RandomMatcher {
 		}
 	}
 
-	public void matchRandomProfiles() throws IOException{
+	public void matchRandomProfiles(String outputPath,Double avgRating[][]) throws IOException{
 		ArrayList<Integer> list= new ArrayList<Integer>();
 		for(int i=5000;i>=1;i--)
 			list.add(i);
@@ -33,17 +33,16 @@ public class RandomMatcher {
 			pair p= new pair(i+1, list.get(i));
 			matching.add(p);
 		}
-
-		BufferedWriter br= new BufferedWriter(new FileWriter("output/randomMatching.csv"));
+		BufferedWriter br= new BufferedWriter(new FileWriter(outputPath));
 		for(int i=0;i<5000;i++){
-			br.write(i+1+","+list.get(i)+",10.0\n");
+			br.write(i+1+","+list.get(i)+","+avgRating[i+1][list.get(i)]);
 			br.flush();
 		}
 		br.close();
 	}
-	public static void main(String args[])throws IOException{
-		RandomMatcher rm= new RandomMatcher();
-		rm.matchRandomProfiles();
-		System.out.println("done matching random profiles");
-	}
+//	public static void main(String args[])throws IOException{
+//		RandomMatcher rm= new RandomMatcher();
+//		rm.matchRandomProfiles();
+//		System.out.println("done matching random profiles");
+//	}
 }

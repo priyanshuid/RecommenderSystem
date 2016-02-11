@@ -27,6 +27,8 @@ class matchingEntry{
 public class SimulationDriver {
 
 	private static final Double PARTITION= 0.3; 
+	
+	private static final Double THRESHOLD= 7.0;
 
 	public String fmRawRatingsFilePath= "data/fmFinalRatings12Jan.csv";
 	public String mfRawRatingsFilePath= "data/mfFinalRatings12Jan.csv";
@@ -188,7 +190,7 @@ public class SimulationDriver {
 			UBCFRatingExtrator.extractTopRatings(input, output, urob.mfRatingMatrix);
 			System.out.println("k="+k+"done");
 			MetricScoreCalculator mscob= new MetricScoreCalculator();
-			mscob.calculate();
+			mscob.calculate(avgob.weightedRatingMatrix, THRESHOLD);
 		}
 	}
 }
