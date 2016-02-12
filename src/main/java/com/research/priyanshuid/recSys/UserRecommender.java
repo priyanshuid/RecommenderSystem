@@ -24,6 +24,12 @@ public class UserRecommender
 
 	public int mTopRec[]= new int[5002];
 	public int fTopRec[]= new int[5002];
+	
+	protected void finalize() throws Throwable {
+		  // Invoke the finalizer of our superclass
+		  // We haven't discussed superclasses or this syntax yet
+		  super.finalize();
+		}
 
 	public void computeMaleRecommendations(String mfTrainFilePath, int k) throws IOException, TasteException
 	{

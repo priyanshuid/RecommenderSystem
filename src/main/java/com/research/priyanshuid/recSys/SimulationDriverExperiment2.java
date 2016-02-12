@@ -10,16 +10,16 @@ import org.apache.mahout.cf.taste.common.TasteException;
 
 public class SimulationDriverExperiment2 {
 
-	public static Double THRESHOLD= 7.0;
-	public static Double PARTITION= 0.3;
+	public static Double THRESHOLD= 6.0;
+	public static Double PARTITION= 0.2;
 	public int[] 	 result;
 
 	public Boolean partitionAlreadyGenerated= false;
 	public Integer numberOfTestHitsMatching=0;
 	public Integer numberOfTestHitsRandom= 0;
 
-	public Double[][] testMF= new Double[5001][5001];
-	public Double[][] testFM= new Double[5001][5001];
+	public double[][] testMF= new double[5002][5002];
+	public double[][] testFM= new double[5002][5002];
 
 	public void partitionDataSet(String inputFilePath,String testFilePath,String trainFilePath) throws FileNotFoundException{
 		DataPartitioner dp = new DataPartitioner();
@@ -49,7 +49,7 @@ public class SimulationDriverExperiment2 {
 		}
 		bw.close();
 	}
-	public void generateTestRatingMatrix(String testFilePath, Double matrix[][]){
+	public void generateTestRatingMatrix(String testFilePath, double matrix[][]){
 		BufferedReader br= null;
 		String line="";
 		try{
@@ -59,7 +59,7 @@ public class SimulationDriverExperiment2 {
 				int f, s;
 				f= Integer.parseInt(values[0].trim());
 				s= Integer.parseInt(values[1].trim());
-				Double rating= Double.parseDouble(values[2].trim());
+				double rating= Double.parseDouble(values[2].trim());
 				matrix[f][s]= rating;
 			}
 		}catch(FileNotFoundException e){
@@ -81,6 +81,7 @@ public class SimulationDriverExperiment2 {
 	public Double calculateDifferenceMetric(String matchingFilePath, Integer count) throws FileNotFoundException{
 		Double result=0.0;
 		BufferedReader br; 
+		int tempCount=0;
 		String line="";
 		try{
 			br= new BufferedReader(new FileReader(matchingFilePath));
@@ -89,57 +90,69 @@ public class SimulationDriverExperiment2 {
 				int f, s;
 				f= Integer.parseInt(values[0].trim());
 				s= Integer.parseInt(values[1].trim());
-				if(testMF[f][s]!=0.0 && testFM[s][f]!=0.0){
-					if(testMF[f][s]>=THRESHOLD || testFM[f][s]>=THRESHOLD){
-						result=result+ Math.abs(testMF[f][s]-testFM[s][f]);
-						count++;
-					}
+				
+				System.out.println(tempCount++);
+				System.out.println(testMF[f][s]+","+testFM[s][f]);
+				if(testMF[f][s]>=THRESHOLD || testFM[s][f]>=THRESHOLD){
+					result=result+ Math.abs(testMF[f][s]-testFM[s][f]);
+					count++;
 				}
 			}	
 		}catch(Exception E){
-			System.out.println(E.toString());
+			E.printStackTrace();
 		}
 		return result;
 	}
 
-	public void simulate(String mfFilePath, String fmFilePath, String matchingResultPath, String randomResultPath, int k) throws IOException, TasteException{
+	public void simulate(String mfFilePath, String fmFilePath, String matchingResultPath, String randomResultPath, int k) throws Throwable{
 
-		String trnMF= "";
-		String tstMF= "";
-		String trnFM= "";
-		String tstFM= "";
+		String trnMF= "data/trnMF11Feb.csv";
+		String tstMF= "data/tstMF11Feb.csv";
+		String trnFM= "data/trnFM11Feb.csv";
+		String tstFM= "data/tstFM11Feb.csv";
 
 		if(!partitionAlreadyGenerated){
 			partitionDataSet(mfFilePath, tstMF, trnMF);
 			partitionDataSet(fmFilePath, tstFM, trnFM);
-			generateTestRatingMatrix(tstFM, testFM);
-			generateTestRatingMatrix(tstMF, testMF);
+			generateTestRatingMatrix(fmFilePath, testFM);
+			System.out.println("partition generated FM");
+			generateTestRatingMatrix(mfFilePath, testMF);
 			partitionAlreadyGenerated=true;
+			System.out.println("partition generated MF");
 		}
 		UserRecommender urob=new UserRecommender();
 		urob.computeMaleRecommendations(trnMF, k);
+		System.out.println("MF recommendations generated");
 		urob.computeFemaleRecommendations(trnFM, k);
+		System.out.println("FM Recommendations generated");
 
 		MatrixAverager avgob= new MatrixAverager();
 		avgob.generateNewMatrix(k, urob);
-
+		urob.finalize();
+		System.out.println("Average Matrix calculated");
 		calculateMatchingForTwoWayRating(k, avgob, matchingResultPath);
-
+		System.out.println("Hungarian matching found");
 		RandomMatcher rmob= new RandomMatcher();
 		rmob.matchRandomProfiles(randomResultPath, avgob.weightedRatingMatrix);
-		
+		System.out.println("Random matching found");
+		System.out.println(matchingResultPath);
+		System.out.println(randomResultPath);
 		Double matchingDifferenceScore= calculateDifferenceMetric(matchingResultPath, numberOfTestHitsMatching);
 		Double randomDifferenceScore= calculateDifferenceMetric(randomResultPath, numberOfTestHitsRandom);
 		System.out.println("MatchingDifferenceScore=>"+ matchingDifferenceScore);
+		System.out.println("matching hits"+numberOfTestHitsMatching);
 		System.out.println("RandomMatchingDifferenceScore=>"+randomDifferenceScore);
+		System.out.println("random hits"+numberOfTestHitsRandom);
 	}
-	public static void main(String args[]) throws IOException, TasteException{
+	public static void main(String args[]) throws Throwable{
+		
 		SimulationDriverExperiment2 sde= new SimulationDriverExperiment2();
+
 		int k=50;
-		String mfFilePath= "";
-		String fmFilePath= "";
-		String matchingResultPath="";
-		String randomResultPath= "";
+		String mfFilePath= "data/mfFinalRatings12Jan.csv";
+		String fmFilePath= "data/fmFinalRatings12Jan.csv";
+		String matchingResultPath="output/matchedProfilesFile.csv";
+		String randomResultPath= "output/randomlyMatchedProfilesFile.csv";
 		sde.simulate(mfFilePath, fmFilePath, matchingResultPath, randomResultPath, k);
 	}
 
