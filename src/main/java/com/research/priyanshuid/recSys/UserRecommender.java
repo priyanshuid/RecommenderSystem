@@ -19,22 +19,18 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 
 public class UserRecommender 
 {
-	public double mfRatingMatrix[][]= new double[5002][5002];
-	public double fmRatingMatrix[][]= new double[5002][5002];
-
-	public int mTopRec[]= new int[5002];
-	public int fTopRec[]= new int[5002];
 	
-	protected void finalize() throws Throwable {
-		  // Invoke the finalizer of our superclass
-		  // We haven't discussed superclasses or this syntax yet
-		  super.finalize();
-		}
-
+	public int uSize=100;
+	public double mfRatingMatrix[][]= new double[uSize+2][uSize+2];
+	public double fmRatingMatrix[][]= new double[uSize+2][uSize+2];
+	
+	public int mTopRec[]= new int[uSize+2];
+	public int fTopRec[]= new int[uSize+2];
+	
 	public void computeMaleRecommendations(String mfTrainFilePath, int k) throws IOException, TasteException
 	{
 		String str= "data/trainMtoF18Jan.csv";
-		DataModel model = new FileDataModel(new File(str));
+		DataModel model = new FileDataModel(new File(mfTrainFilePath));
 		UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
 		UserNeighborhood neighborhood = new NearestNUserNeighborhood(k, similarity, model);
 		UserBasedRecommender recommender = 
@@ -45,9 +41,9 @@ public class UserRecommender
 //		 System.out.println(recommendation);
 //		}
 		BufferedWriter wr= new BufferedWriter(new FileWriter("output/maleToFemaleRec.csv"));
-		for(int i=1;i<=5000;i++){
+		for(int i=1;i<=uSize;i++){
 			try{
-				List<RecommendedItem> recommendations= recommender.recommend(i, 5000);
+				List<RecommendedItem> recommendations= recommender.recommend(i, uSize);
 				if(!recommendations.isEmpty())
 				{
 					mTopRec[i]=(int) recommendations.get(0).getItemID();
@@ -69,15 +65,15 @@ public class UserRecommender
 	}
 	public void computeFemaleRecommendations(String FMTrainFilePath, int k) throws IOException, TasteException{
 		String str= "data/trainFtoM18Jan.csv";
-		DataModel model2 = new FileDataModel(new File(str));
+		DataModel model2 = new FileDataModel(new File(FMTrainFilePath));
 		UserSimilarity similarity2 = new PearsonCorrelationSimilarity(model2);
 		UserNeighborhood neighborhood2 = new NearestNUserNeighborhood(k, similarity2, model2);
 		UserBasedRecommender recommender2 = 
 				new GenericUserBasedRecommender(model2, neighborhood2, similarity2);
 		BufferedWriter wr2= new BufferedWriter(new FileWriter("output/femaleToMaleRec.csv"));
-		for(int i=1;i<=5000;i++){
+		for(int i=1;i<=uSize;i++){
 			try{
-				List<RecommendedItem> recommendations= recommender2.recommend(i, 5000);
+				List<RecommendedItem> recommendations= recommender2.recommend(i, uSize);
 				wr2.write(i+ ",");
 				if(!recommendations.isEmpty())
 				{

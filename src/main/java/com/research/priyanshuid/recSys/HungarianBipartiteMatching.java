@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class HungarianBipartiteMatching
 {
-	
+	public int uSize;
 	private final double[][] costMatrix;
 	private final int        rows, cols, dim;
 	private final double[]   labelByWorker, labelByJob;
@@ -17,7 +17,7 @@ public class HungarianBipartiteMatching
 
 	public HungarianBipartiteMatching(double[][] costMatrix)
 	{
-		this.dim= 5001;
+		this.dim= uSize+1;
 		//this.dim = Math.max(costMatrix.length, costMatrix[0].length);
 		this.rows = costMatrix.length;
 		this.cols = costMatrix[0].length;
@@ -328,6 +328,5 @@ public class HungarianBipartiteMatching
 //		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(mfMatchingPath, MaleToFemaleRatingGenerator.mfRatingMatrix);
 //		HungarianBipartiteMatching.calculateMatchingForOneWayRatingHelperFunction(fmMatchingPath, FemaleToMaleRatingGenerator.fmRatingMatrix);
 //	}
-
 
 }

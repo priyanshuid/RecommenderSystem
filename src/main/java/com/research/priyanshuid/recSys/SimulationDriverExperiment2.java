@@ -11,15 +11,17 @@ import org.apache.mahout.cf.taste.common.TasteException;
 public class SimulationDriverExperiment2 {
 
 	public static Double THRESHOLD= 6.0;
-	public static Double PARTITION= 0.2;
-	public int[] 	 result;
+	public static Double PARTITION= 0.6;
+	public int[] result;
+
+	public static final int uSize= 100;
 
 	public Boolean partitionAlreadyGenerated= false;
 	public Integer numberOfTestHitsMatching=0;
 	public Integer numberOfTestHitsRandom= 0;
 
-	public double[][] testMF= new double[5002][5002];
-	public double[][] testFM= new double[5002][5002];
+	public double[][] testMF= new double[uSize+2][uSize+2];
+	public double[][] testFM= new double[uSize+2][uSize+2];
 
 	public void partitionDataSet(String inputFilePath,String testFilePath,String trainFilePath) throws FileNotFoundException{
 		DataPartitioner dp = new DataPartitioner();
@@ -28,8 +30,8 @@ public class SimulationDriverExperiment2 {
 	public void calculateMatchingForTwoWayRating(int k, MatrixAverager ob, String outputFilePath) throws IOException, TasteException
 	{
 		BufferedWriter bw= new BufferedWriter(new FileWriter(outputFilePath));
-		int r= 5001, c=5001;
-		double[][] cost = new double[5001][5001];
+		int r= uSize+1, c=uSize+1;
+		double[][] cost = new double[uSize+1][uSize+1];
 		for (int i = 0; i < r; i++)
 		{
 			for (int j = 0; j < c; j++)
@@ -90,14 +92,16 @@ public class SimulationDriverExperiment2 {
 				int f, s;
 				f= Integer.parseInt(values[0].trim());
 				s= Integer.parseInt(values[1].trim());
-				
-				System.out.println(tempCount++);
-				System.out.println(testMF[f][s]+","+testFM[s][f]);
-				if(testMF[f][s]>=THRESHOLD || testFM[s][f]>=THRESHOLD){
-					result=result+ Math.abs(testMF[f][s]-testFM[s][f]);
-					count++;
+
+				if(testMF[f][s]>=0.0 && testFM[s][f]>=0){
+					if(testMF[f][s]>=THRESHOLD || testFM[s][f]>=THRESHOLD){
+						result=result+ Math.abs(testMF[f][s]-testFM[s][f]);
+						System.out.println(testMF[f][s]+","+testFM[s][f]);
+						count++;
+					}
 				}
 			}	
+			System.out.println(count);
 		}catch(Exception E){
 			E.printStackTrace();
 		}
@@ -114,25 +118,27 @@ public class SimulationDriverExperiment2 {
 		if(!partitionAlreadyGenerated){
 			partitionDataSet(mfFilePath, tstMF, trnMF);
 			partitionDataSet(fmFilePath, tstFM, trnFM);
-			generateTestRatingMatrix(fmFilePath, testFM);
+			generateTestRatingMatrix(tstMF, testFM);
 			System.out.println("partition generated FM");
-			generateTestRatingMatrix(mfFilePath, testMF);
+			generateTestRatingMatrix(tstMF, testMF);
 			partitionAlreadyGenerated=true;
 			System.out.println("partition generated MF");
 		}
 		UserRecommender urob=new UserRecommender();
+		urob.uSize= uSize;
 		urob.computeMaleRecommendations(trnMF, k);
 		System.out.println("MF recommendations generated");
 		urob.computeFemaleRecommendations(trnFM, k);
 		System.out.println("FM Recommendations generated");
 
 		MatrixAverager avgob= new MatrixAverager();
+		avgob.uSize=uSize;
 		avgob.generateNewMatrix(k, urob);
-		urob.finalize();
 		System.out.println("Average Matrix calculated");
 		calculateMatchingForTwoWayRating(k, avgob, matchingResultPath);
 		System.out.println("Hungarian matching found");
 		RandomMatcher rmob= new RandomMatcher();
+		rmob.uSize= uSize;
 		rmob.matchRandomProfiles(randomResultPath, avgob.weightedRatingMatrix);
 		System.out.println("Random matching found");
 		System.out.println(matchingResultPath);
@@ -145,12 +151,10 @@ public class SimulationDriverExperiment2 {
 		System.out.println("random hits"+numberOfTestHitsRandom);
 	}
 	public static void main(String args[]) throws Throwable{
-		
 		SimulationDriverExperiment2 sde= new SimulationDriverExperiment2();
-
 		int k=50;
-		String mfFilePath= "data/mfFinalRatings12Jan.csv";
-		String fmFilePath= "data/fmFinalRatings12Jan.csv";
+		String mfFilePath= "data/mappedTop100MF.csv";
+		String fmFilePath= "data/mappedTop100FM.csv";
 		String matchingResultPath="output/matchedProfilesFile.csv";
 		String randomResultPath= "output/randomlyMatchedProfilesFile.csv";
 		sde.simulate(mfFilePath, fmFilePath, matchingResultPath, randomResultPath, k);

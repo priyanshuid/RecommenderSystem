@@ -8,15 +8,17 @@ import org.apache.mahout.cf.taste.common.TasteException;
 
 public class MatrixAverager {
 	
-	public Double weightedRatingMatrix[][]= new Double[5002][5002];	
+	public int uSize=100;
+	public Double weightedRatingMatrix[][]= new Double[uSize+2][uSize+2];	
 	public void generateNewMatrix(int k, UserRecommender ob) throws IOException, TasteException {
-	
 		/**
 		 * uncomment these lines if you want to run one way recommendation separately from 
 		 * two way recommendation. Else it might not work.
 		 */
-		for(int i=1;i<=5001;i++){
-			for(int j=1;j<=5001;j++){
+		int count=0;
+		for(int i=1;i<=uSize+1;i++){
+			for(int j=1;j<=uSize+1;j++){
+				System.out.println(count++);
 				weightedRatingMatrix[i][j]=(ob.mfRatingMatrix[i][j]+ob.fmRatingMatrix[j][i])/2;
 				//weightedRatingMatrix[i][j]=Math.max(ob.mfRatingMatrix[i][j],ob.fmRatingMatrix[j][i]);
 			}

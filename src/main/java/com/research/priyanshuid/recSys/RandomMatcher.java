@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class RandomMatcher {
 
+	public int uSize;
 	public class pair{
 		int i, j;
 		pair(){
@@ -23,18 +24,18 @@ public class RandomMatcher {
 
 	public void matchRandomProfiles(String outputPath,Double avgRating[][]) throws IOException{
 		ArrayList<Integer> list= new ArrayList<Integer>();
-		for(int i=5000;i>=1;i--)
+		for(int i=uSize;i>=1;i--)
 			list.add(i);
 		long seed= System.nanoTime();
 		Collections.shuffle(list, new Random(seed));
 		Collections.shuffle(list, new Random(seed));
 		ArrayList<pair> matching= new ArrayList<pair>();
-		for(int i=0;i<5000;i++){
+		for(int i=0;i<uSize;i++){
 			pair p= new pair(i+1, list.get(i));
 			matching.add(p);
 		}
 		BufferedWriter br= new BufferedWriter(new FileWriter(outputPath));
-		for(int i=0;i<5000;i++){
+		for(int i=0;i<uSize;i++){
 			br.write(i+1+","+list.get(i)+","+avgRating[i+1][list.get(i)]);
 			br.flush();
 		}

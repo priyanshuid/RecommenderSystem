@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class MetricScoreCalculator {
+	
+	public int uSize;
 
 	public class pair{
 		public int r1, r2;
@@ -22,11 +24,11 @@ public class MetricScoreCalculator {
 	}
 
 	public pair countMatchingPoints(String actualDataPath, String generatedResultPath, int flag, Double Threshold){
-		boolean markedWith10[]= new boolean[5001];
-		boolean markedWithout10[]= new boolean[5001];
-		boolean actual[][]= new boolean[5002][5002];
-		for(int r=0;r<=5001;r++)
-			for(int c=0;c<=5001;c++)
+		boolean markedWith10[]= new boolean[uSize+1];
+		boolean markedWithout10[]= new boolean[uSize+1];
+		boolean actual[][]= new boolean[uSize+1][uSize+1];
+		for(int r=0;r<=uSize+1;r++)
+			for(int c=0;c<=uSize+1;c++)
 				actual[r][c]=false;
 		BufferedReader br= null;
 		String line="";

@@ -33,14 +33,16 @@ public class SimulationDriver {
 	public String fmRawRatingsFilePath= "data/fmFinalRatings12Jan.csv";
 	public String mfRawRatingsFilePath= "data/mfFinalRatings12Jan.csv";
 	private Integer partInt= (int) (PARTITION*10);
-
+	
+	public int uSize;
+	
 	public String testMFRatingPath= "data/testMF"+ partInt.toString() +".csv";
 	public String trainMFRatingPath= "data/trainMF"+partInt.toString()+".csv";
 
 	public String testFMRatingPath= "data/testFM"+ partInt.toString() +".csv";
 	public String trainFMRatingPath= "data/trainFM"+partInt.toString()+".csv";
 
-	private static final int SZ=5001;
+	private static final int SZ=101;
 	public int[] 	 result;
 	public ArrayList<matchingEntry> entries;
 
@@ -52,7 +54,7 @@ public class SimulationDriver {
 	public double matchingRecommenderScore=0;
 	public double avgMatchingRecommenderScore=0;
 
-	private static final int TOTALUSERS=5000;
+	private static final int TOTALUSERS=100;
 
 	public void scoreTwoWayRatings(int k, UserRecommender ob, MatrixAverager avgob) throws IOException, TasteException{
 		entries= new ArrayList<matchingEntry>();
@@ -60,7 +62,7 @@ public class SimulationDriver {
 			matchingEntry newEntry= new matchingEntry(index+1, result[index], avgob.weightedRatingMatrix[index+1][result[index]]);
 			entries.add(newEntry);
 		}
-		for(int i=1;i<=5000;i++)
+		for(int i=1;i<=uSize;i++)
 		{
 			maleUserRecommenderScore+= ob.mfRatingMatrix[i][ob.mTopRec[i]];
 			femaleUserRecommenderScore+= ob.fmRatingMatrix[i][ob.fTopRec[i]];
@@ -123,8 +125,8 @@ public class SimulationDriver {
 	public void calculateMatchingForTwoWayRating(int k, MatrixAverager ob) throws IOException, TasteException
 	{
 		BufferedWriter bw= new BufferedWriter(new FileWriter("output/maximum_matching_with_ratings.csv"));
-		int r= 5001, c=5001;
-		double[][] cost = new double[5001][5001];
+		int r= uSize+1, c=uSize+1;
+		double[][] cost = new double[uSize+1][uSize+1];
 		for (int i = 0; i < r; i++)
 		{
 			for (int j = 0; j < c; j++)
